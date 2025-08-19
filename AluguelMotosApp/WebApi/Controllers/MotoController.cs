@@ -1,31 +1,56 @@
 using Application.Dtos;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")] // Somente Admin pode acessar toda a controller
     public class MotoController : ControllerBase
     {
-        private readonly ILogger<MotoController> _logger;
         private readonly IMotoService _motoService;
 
-        public MotoController(ILogger<MotoController> logger)
+        public MotoController(IMotoService motoService)
         {
-            _logger = logger;
+            _motoService = motoService;
         }
 
-        [HttpGet(Name = "motos")]
-        public async void Motos()
+        /// <summary>
+        /// Retorna todas as motos
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
-           await _motoService.GetAllAsync();
+            var motos = await _motoService.GetAllAsync();
+            return Ok(motos);
         }
 
-        [HttpPost(Name = "motos")]
-        public async void Motos(MotoDto motoDto)
+        /// <summary>
+        /// Retorna uma moto pelo ID
+        /// </summary>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
         {
-            await _motoService.GetAllAsync();
+            var moto = await _motoService.GetByIdAsync(id);
+            if (moto == null)
+                return NotFound(new { Message = "Moto não encontrada" });
+
+            return Ok(moto);
+        }
+
+        /// <summary>
+        /// Adiciona uma nova moto
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] MotoDto motoDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _motoService.AddAsync(motoDto);
+            return Ok(new { Message = "Moto adicionada com sucesso!" });
         }
     }
 }
