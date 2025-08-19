@@ -82,3 +82,4 @@ docker-compose.override.yml
 *.bak
 *.swp
 *.lock
+/AluguelMotosApp/Domain/Domain.csproj
