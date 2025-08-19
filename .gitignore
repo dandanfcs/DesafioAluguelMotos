@@ -1,0 +1,84 @@
+# ================================
+# Build e binários
+# ================================
+bin/
+obj/
+out/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.app
+*.so
+*.dylib
+
+# ================================
+# Pacotes NuGet
+# ================================
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+artifacts/
+project.lock.json
+project.fragment.lock.json
+
+# ================================
+# Visual Studio / IDE
+# ================================
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+_ReSharper*/
+*.DotSettings.user
+.idea/
+
+# ================================
+# Configurações locais e sensíveis
+# ================================
+appsettings.*.json
+launchSettings.json
+.env
+*.local
+*.db
+*.sqlite
+*.pfx
+*.key
+*.cer
+
+# ================================
+# Testes
+# ================================
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+*.ncrunch*
+*.dotCover*
+
+# ================================
+# Publicação / Deploy
+# ================================
+publish/
+wwwroot/
+*.zip
+*.tar.gz
+*.tar
+
+# ================================
+# Docker (se usar)
+# ================================
+docker-compose.override.yml
+*.docker
+
+# ================================
+# Outros temporários
+# ================================
+*.tmp
+*.bak
+*.swp
+*.lock
