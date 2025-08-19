@@ -1,4 +1,4 @@
-﻿using Domain;
+﻿using Application.Interfaces;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +24,7 @@ public class UserService : IUserService
         _config = config;
     }
 
-    public async Task<string> RegisterUserAsync(string email, string password, string role)
+    public async Task<string> RegistrarUsuarioAsync(string email, string password, string role)
     {
         var user = new ApplicationUser { UserName = email, Email = email };
         var result = await _userManager.CreateAsync(user, password);
@@ -51,6 +51,7 @@ public class UserService : IUserService
             new Claim(ClaimTypes.Name, user.UserName ?? ""),
             new Claim(ClaimTypes.Email, user.Email ?? "")
         };
+
         claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));

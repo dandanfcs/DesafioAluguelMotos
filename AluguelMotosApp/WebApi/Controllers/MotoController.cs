@@ -21,36 +21,74 @@ namespace WebApi.Controllers
         /// Retorna todas as motos
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> ListarMotos()
         {
-            var motos = await _motoService.GetAllAsync();
+            var motos = await _motoService.ListarMotosCadastradasAsync();
             return Ok(motos);
+        }
+
+        /// <summary>
+        /// Cadastrar uma nova moto
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> CadastrarMoto([FromBody] MotoDto motoDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _motoService.CadastrarMotoAsync(motoDto);
+            return Ok(new { Message = "Moto adicionada com sucesso!" });
         }
 
         /// <summary>
         /// Retorna uma moto pelo ID
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> ObterMotoPorId(string id)
         {
-            var moto = await _motoService.GetByIdAsync(id);
+            var moto = await _motoService.ObterMotoPorIdAsync(id);
             if (moto == null)
                 return NotFound(new { Message = "Moto não encontrada" });
 
             return Ok(moto);
         }
 
-        /// <summary>
-        /// Adiciona uma nova moto
-        /// </summary>
-        [HttpPost]
-        public async Task<IActionResult> Add([FromBody] MotoDto motoDto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+  
 
-            await _motoService.AddAsync(motoDto);
-            return Ok(new { Message = "Moto adicionada com sucesso!" });
+        /// <summary>
+        /// Modificar a placa de uma moto
+        /// </summary>
+        [HttpPut("{id}/placa")]
+        public async Task<IActionResult> AtualizarPlaca([FromRoute] string id, [FromBody] PlacaDto placaDto)
+        {
+
+            if (string.IsNullOrWhiteSpace(placaDto.Placa))
+                return BadRequest(new { Status = 400, Mensagem = "A placa não pode ser vazia." });
+
+            var sucesso = await _motoService.AtualizarPlacaAsync(id, placaDto.Placa);
+
+            if (!sucesso)
+                return NotFound(new { Status = 404, Mensagem = $"Moto com id {id} não encontrada." });
+
+            return NoContent(); 
+        }
+
+
+        /// <summary>
+        /// Consultar Motos existentes
+        /// </summary>
+        [HttpGet("/placa")]
+        public async Task<IActionResult> ObterMotoPelaPlaca([FromRoute] string placa)
+        {
+            if (string.IsNullOrWhiteSpace(placa))
+                return BadRequest(new { Status = 400, Mensagem = "A placa não pode ser vazia." });
+
+            var moto = await _motoService.ObterMotoPorPlacaAsync(placa);
+
+            if (moto is null)
+                return NotFound(new { Status = 404, Mensagem = $"Moto com placa {placa} não encontrada." });
+
+            return Ok(moto);
         }
     }
 }

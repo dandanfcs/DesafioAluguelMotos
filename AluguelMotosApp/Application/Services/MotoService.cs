@@ -1,6 +1,7 @@
 ﻿using Application.Dtos;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -9,12 +10,13 @@ namespace Application.Services
     {
         private IMotoRepository motoRepository;
 
-        public MotoService(IMotoRepository motoRepository)
+
+        public MotoService(IMotoRepository motoRepository, IMessagingService messagingService)
         {
             this.motoRepository = motoRepository;
         }
 
-        public async Task AddAsync(MotoDto motoDto)
+        public async Task CadastrarMotoAsync(MotoDto motoDto)
         {
             var moto = new Moto()
             {
@@ -24,17 +26,32 @@ namespace Application.Services
                 Modelo = motoDto.Modelo,    
             };
 
-           await motoRepository.AddAsync(moto);
+            await motoRepository.CadastrarMotoAsync(moto);
         }
 
-        public async Task<List<Moto>> GetAllAsync()
+        public async Task<Moto> ObterMotoPorPlacaAsync( string placa)
         {
-            return await motoRepository.GetAllAsync();
+            return await motoRepository.ObterMotoPorPlacaAsync(placa);
+        }
+        
+        public async Task<Moto> ObterMotoPorIdAsync(string id)
+        {
+            return await motoRepository.ObterMotoPorIdAsync(id);
         }
 
-        public async Task<Moto> GetByIdAsync(int id)
+        public async Task<bool> AtualizarPlacaAsync(string id, string placa)
         {
-            return await motoRepository.GetByIdAsync(id);
+            var linhasAfetadas = await motoRepository.AtualizarPlacaDaMotoAsync(id,placa);
+
+            if (linhasAfetadas > 0)
+                return true;
+
+            return false;
+        }
+
+        public async Task<List<Moto>> ListarMotosCadastradasAsync()
+        {
+            return await motoRepository.ListarMotosCadastradasAsync();
         }
     }
 }

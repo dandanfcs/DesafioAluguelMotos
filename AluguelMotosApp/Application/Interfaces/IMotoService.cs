@@ -7,8 +7,10 @@ namespace Application.Interfaces
 {
     public interface IMotoService
     {
-        Task<Moto> GetByIdAsync(int id);
-        Task<List<Moto>> GetAllAsync();
-        Task AddAsync(MotoDto motoDto);
+        Task<Moto> ObterMotoPorIdAsync(string id);
+        Task<List<Moto>> ListarMotosCadastradasAsync();
+        Task CadastrarMotoAsync(MotoDto motoDto);
+        Task<Moto> ObterMotoPorPlacaAsync(string placa);
+        Task<bool> AtualizarPlacaAsync(string id, string placa);
     }
 }

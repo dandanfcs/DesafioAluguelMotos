@@ -4,8 +4,10 @@ namespace Domain.Interfaces
 {
     public interface IMotoRepository
     {
-        Task<Moto> GetByIdAsync(int id);
-        Task<List<Moto>> GetAllAsync();
-        Task AddAsync(Moto moto);
+        Task<Moto> ObterMotoPorIdAsync(string id);
+        Task<Moto> ObterMotoPorPlacaAsync(string placa);
+        Task<int> AtualizarPlacaDaMotoAsync(string id, string placa);
+        Task<List<Moto>> ListarMotosCadastradasAsync();
+        Task CadastrarMotoAsync(Moto moto);
     }
 }
