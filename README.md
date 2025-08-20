@@ -20,8 +20,8 @@ Antes de rodar a API, você precisa ter instalados:
 docker run -d \
   --name postgres-db \
   -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=Senha123 \
-  -e POSTGRES_DB=LocacaoDb \
+  -e POSTGRES_PASSWORD=123456 \
+  -e POSTGRES_DB=MotosAppDb \
   -p 5432:5432 \
   postgres:15
 ```
@@ -44,14 +44,25 @@ docker run -d \
 
 ## 🔧 Dependências do projeto
 
-No `.csproj` da API, certifique-se de ter:
+No `.csproj` da camada de Infra, certifique-se de ter:
 
 ```xml
-<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.*" />
-<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.*" />
-<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.*" />
-<PackageReference Include="RabbitMQ.Client" Version="7.4.*" />
-<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.19" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
+```
+
+No `.csproj` da camada de WebApi, certifique-se de ter:
+
+```xml
+   <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+     <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+     <PrivateAssets>all</PrivateAssets>
+   </PackageReference>
+   <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 ```
 
 ---
@@ -60,26 +71,67 @@ No `.csproj` da API, certifique-se de ter:
 
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=LocacaoDb;Username=postgres;Password=Senha123",
-    "IdentityConnection": "Host=localhost;Port=5432;Database=IdentityDb;Username=postgres;Password=Senha123"
-  },
-  "RabbitMQ": {
-    "HostName": "localhost",
-    "UserName": "guest",
-    "Password": "guest"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
-    }
-  },
-  "AllowedHosts": "*"
+  "AllowedHosts": "*",
+ "ConnectionStrings": {
+   "DefaultConnection": "Host=localhost;Port=5432;Database=MotosAppDb;Username=postgres;Password=123456"
+ },
+ "JwtSettings": {
+   "Key": "chave-jwt-desafio-backend-dotnet",
+   "Issuer": "MinhaApi",
+   "Audience": "MinhaApiUsers"
+ },
+ "RabbitMq": {
+   "HostName": "localhost",
+   "UserName": "guest",
+   "Password": "guest"
+ }
 }
 ```
+## 🔹 Configuração do `launchSettings.json`
 
+```json
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:37859",
+      "sslPort": 44319
+    }
+  },
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5065",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7234;http://localhost:5065",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
+```
 ---
 
 ## ⚡ Rodando as Migrations
@@ -121,24 +173,11 @@ dotnet run --project WebApi/WebApi.csproj
 3. A API estará disponível em:
 
 ```
-https://localhost:5001
-http://localhost:5000
+https://localhost:7234
+http://localhost:5065
 ```
 
 4. Swagger UI: `https://localhost:5001/swagger`  
 
----
 
-## 🔄 Testando integrações
-
-- **RabbitMQ:** verifique se a conexão está funcionando via UI (`http://localhost:15672`)  
-- **PostgreSQL:** conecte via PgAdmin ou DBeaver para validar se as tabelas foram criadas  
-
----
-
-## 💡 Dicas
-
-- Para ambiente de desenvolvimento, use **Docker Compose** para subir PostgreSQL e RabbitMQ juntos  
-- Sempre configure **connection strings e credenciais** no `appsettings.Development.json`  
-- Use `dotnet ef database update` sempre que adicionar novas migrations  
 
