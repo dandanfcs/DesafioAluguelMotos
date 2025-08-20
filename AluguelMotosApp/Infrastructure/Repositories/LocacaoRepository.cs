@@ -51,28 +51,18 @@ namespace Infrastructure.Repositories
                                  .ToListAsync();
         }
 
-        public async Task<IEnumerable<Locacao>> ObterPorMotoIdAsync(string motoId)
-        {
-            return await _context.Locacao
-                                 .Include(l => l.Entregador)
-                                 .Where(l => l.MotoId == motoId)
-                                 .ToListAsync();
-        }
-
-        public async Task RemoverAsync(Guid id)
-        {
-            var locacao = await _context.Locacao.FindAsync(id);
-            if (locacao != null)
-            {
-                _context.Locacao.Remove(locacao);
-                await _context.SaveChangesAsync();
-            }
-        }
-
         public async Task<bool> ExisteLocacaoAtivaParaMotoAsync(string motoId)
         {
             return await _context.Locacao
                                  .AnyAsync(l => l.MotoId == motoId && l.DataFim == null);
+        }
+
+        public async Task<bool> ExisteAlgumaLocacaoComEsseEntregadorIdEMotoId(Guid entregadorId, string motoId)
+        {
+            return await _context.Locacao
+                                .Where(l => l.EntregadorId == entregadorId
+                                && l.MotoId == motoId)
+                                .AnyAsync();
         }
     }
 }

@@ -5,12 +5,10 @@ namespace Domain.Interfaces
     public interface ILocacaoRepository
     {
         Task<Locacao> ObterPorIdAsync(Guid id);
+        Task<bool> ExisteAlgumaLocacaoComEsseEntregadorIdEMotoId(Guid entregadorId, string motoId);
         Task<IEnumerable<Locacao>> ObterTodosAsync();
         Task<IEnumerable<Locacao>> ObterPorEntregadorIdAsync(Guid entregadorId);
-        Task<IEnumerable<Locacao>> ObterPorMotoIdAsync(string motoId);
         Task AdicionarAsync(Locacao locacao);
-        Task AtualizarAsync(Locacao locacao);
-        Task RemoverAsync(Guid id);
         Task<bool> ExisteLocacaoAtivaParaMotoAsync(string motoId);
     }
 }
