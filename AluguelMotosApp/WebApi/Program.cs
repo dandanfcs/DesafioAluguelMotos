@@ -46,6 +46,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    //Cadastra as roles ao startar api caso nao exista
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
     string[] roles = new[] { "Admin", "Entregador" };
