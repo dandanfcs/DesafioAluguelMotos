@@ -44,25 +44,41 @@ docker run -d \
 
 ## 🔧 Dependências do projeto
 
+No `.csproj` da camada de Application, certifique-se de ter:
+
+```xml
+<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.3.0" />
+<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+```
+
 No `.csproj` da camada de Infra, certifique-se de ter:
 
 ```xml
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.19" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
+  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
+<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.19" />
+<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
+  <PrivateAssets>all</PrivateAssets>
+  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+</PackageReference>
+<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+<PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
 ```
 
 No `.csproj` da camada de WebApi, certifique-se de ter:
 
 ```xml
-   <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
-     <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-     <PrivateAssets>all</PrivateAssets>
-   </PackageReference>
-   <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+	<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	<PrivateAssets>all</PrivateAssets>
+</PackageReference>
+<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 ```
 
 ---
@@ -71,21 +87,48 @@ No `.csproj` da camada de WebApi, certifique-se de ter:
 
 ```json
 {
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
   "AllowedHosts": "*",
- "ConnectionStrings": {
-   "DefaultConnection": "Host=localhost;Port=5432;Database=MotosAppDb;Username=postgres;Password=123456"
- },
- "JwtSettings": {
-   "Key": "chave-jwt-desafio-backend-dotnet",
-   "Issuer": "MinhaApi",
-   "Audience": "MinhaApiUsers"
- },
- "RabbitMq": {
-   "HostName": "localhost",
-   "UserName": "guest",
-   "Password": "guest"
- }
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=MotosAppDb;Username=postgres;Password=123456"
+  },
+  "JwtSettings": {
+    "Key": "chave-jwt-desafio-backend-dotnet",
+    "Issuer": "MinhaApi",
+    "Audience": "MinhaApiUsers"
+  },
+  "RabbitMq": {
+    "HostName": "localhost",
+    "UserName": "guest",
+    "Password": "guest"
+  },
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "logs/app_log.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ],
+    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ]
+  }
 }
+
 ```
 ## 🔹 Configuração do `launchSettings.json`
 
