@@ -7,7 +7,7 @@ namespace WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")] // Somente Admin pode acessar toda a controller
+    [Authorize(Roles = "Admin")] 
     public class MotoController : ControllerBase
     {
         private readonly IMotoService _motoService;
@@ -77,7 +77,7 @@ namespace WebApi.Controllers
         /// <summary>
         /// Consultar Motos existentes
         /// </summary>
-        [HttpGet("/placa")]
+        [HttpGet("/placa/{placa}")]
         public async Task<IActionResult> ObterMotoPelaPlaca([FromRoute] string placa)
         {
             if (string.IsNullOrWhiteSpace(placa))
@@ -89,6 +89,15 @@ namespace WebApi.Controllers
                 return NotFound(new { Status = 404, Mensagem = $"Moto com placa {placa} não encontrada." });
 
             return Ok(moto);
+        }
+
+        /// <summary>
+        /// Consultar Motos existentes
+        /// </summary>
+        [HttpDelete("/placa/{id}")]
+        public async Task RemoverMoto([FromRoute] string id)
+        {
+            await _motoService.RemoverMotoAsync(id);
         }
     }
 }

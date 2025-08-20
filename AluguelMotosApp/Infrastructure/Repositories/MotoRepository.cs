@@ -51,9 +51,16 @@ namespace Infrastructure.Repositories
         }
         public async Task<int> AtualizarPlacaDaMotoAsync(string id, string novaPlaca)
         {
-           return await _context.Moto.Where(x => x.Identificador == id)
-                         .ExecuteUpdateAsync(s => s.SetProperty(m => m.Placa, novaPlaca));
+            return await _context.Moto.Where(x => x.Identificador == id)
+            .ExecuteUpdateAsync(s => s.SetProperty(m => m.Placa, novaPlaca));
         }
 
+        public async Task RemoverMotoAsync(string id)
+        {
+            var moto = await _context.Moto.Where(x => x.Identificador == id).FirstOrDefaultAsync();
+            _context.Moto.Remove(moto);
+
+           await _context.SaveChangesAsync();
+        }
     }
 }

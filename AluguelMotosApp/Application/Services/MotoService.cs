@@ -9,11 +9,12 @@ namespace Application.Services
     public class MotoService : IMotoService
     {
         private IMotoRepository motoRepository;
+        private ILocacaoRepository locacaoRepository;
 
-
-        public MotoService(IMotoRepository motoRepository, IMessagingService messagingService)
+        public MotoService(IMotoRepository motoRepository, ILocacaoRepository locacaoRepository)
         {
             this.motoRepository = motoRepository;
+            this.locacaoRepository = locacaoRepository;
         }
 
         public async Task CadastrarMotoAsync(MotoDto motoDto)
@@ -23,17 +24,17 @@ namespace Application.Services
                 Identificador = motoDto.Identificador,
                 Ano = motoDto.Ano,
                 Placa = motoDto.Placa,
-                Modelo = motoDto.Modelo,    
+                Modelo = motoDto.Modelo,
             };
 
             await motoRepository.CadastrarMotoAsync(moto);
         }
 
-        public async Task<Moto> ObterMotoPorPlacaAsync( string placa)
+        public async Task<Moto> ObterMotoPorPlacaAsync(string placa)
         {
             return await motoRepository.ObterMotoPorPlacaAsync(placa);
         }
-        
+
         public async Task<Moto> ObterMotoPorIdAsync(string id)
         {
             return await motoRepository.ObterMotoPorIdAsync(id);
@@ -41,7 +42,7 @@ namespace Application.Services
 
         public async Task<bool> AtualizarPlacaAsync(string id, string placa)
         {
-            var linhasAfetadas = await motoRepository.AtualizarPlacaDaMotoAsync(id,placa);
+            var linhasAfetadas = await motoRepository.AtualizarPlacaDaMotoAsync(id, placa);
 
             if (linhasAfetadas > 0)
                 return true;
@@ -52,6 +53,16 @@ namespace Application.Services
         public async Task<List<Moto>> ListarMotosCadastradasAsync()
         {
             return await motoRepository.ListarMotosCadastradasAsync();
+        }
+
+        public async Task RemoverMotoAsync(string id)
+        {
+            var existeLocacao = await locacaoRepository.ExisteLocacaoAtivaParaMotoAsync(id);
+
+            if (existeLocacao)
+                throw new Exception("A moto nao pode ser removida, pois existe locacao para a mesma!");
+
+            await motoRepository.RemoverMotoAsync(id);
         }
     }
 }

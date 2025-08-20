@@ -36,6 +36,12 @@ namespace Infrastructure.Data
             {
                 entity.HasKey(m => m.Id);
 
+                entity.HasIndex(m => m.Cnpj)
+                      .IsUnique();
+
+                entity.HasIndex(m => m.NumeroCnh)
+                      .IsUnique();
+
                 entity.HasMany(e => e.Locacoes)
                 .WithOne(l => l.Entregador)
                 .HasForeignKey(l => l.EntregadorId);

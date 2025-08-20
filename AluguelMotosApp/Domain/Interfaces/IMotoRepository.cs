@@ -9,5 +9,6 @@ namespace Domain.Interfaces
         Task<int> AtualizarPlacaDaMotoAsync(string id, string placa);
         Task<List<Moto>> ListarMotosCadastradasAsync();
         Task CadastrarMotoAsync(Moto moto);
+        Task RemoverMotoAsync(string id);
     }
 }

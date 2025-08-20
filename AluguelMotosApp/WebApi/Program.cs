@@ -1,5 +1,4 @@
 ﻿using Infrastructure.DI;
-using Infrastructure.Messaging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 

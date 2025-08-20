@@ -3,10 +3,9 @@ using Infrastructure.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using System;
 using System.Text;
 
-namespace Infrastructure.Messaging
+namespace Infrastructure.Services
 {
     public class RabbitMqService : IMessagingService, IDisposable
     {

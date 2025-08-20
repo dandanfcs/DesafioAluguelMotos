@@ -12,5 +12,6 @@ namespace Application.Interfaces
         Task CadastrarMotoAsync(MotoDto motoDto);
         Task<Moto> ObterMotoPorPlacaAsync(string placa);
         Task<bool> AtualizarPlacaAsync(string id, string placa);
+        Task RemoverMotoAsync(string id);
     }
 }

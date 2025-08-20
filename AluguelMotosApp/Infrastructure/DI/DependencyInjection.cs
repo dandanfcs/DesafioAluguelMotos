@@ -1,6 +1,4 @@
-﻿using Application.Interfaces;
-using Infrastructure.Configuration;
-using Infrastructure.Messaging;
+﻿using Infrastructure.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
