@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
@@ -10,33 +11,49 @@ namespace Application.Services
         private readonly ILocacaoRepository _locacaoRepository;
         private readonly IEntregadorRepository _entregadorRepository;
         private readonly IMotoRepository _motoRepository;
+        private readonly ILogger<LocacaoService> _logger;
 
         public LocacaoService(
             ILocacaoRepository locacaoRepository,
             IEntregadorRepository entregadorRepository,
-            IMotoRepository motoRepository)
+            IMotoRepository motoRepository,
+            ILogger<LocacaoService> logger)
         {
             _locacaoRepository = locacaoRepository;
             _entregadorRepository = entregadorRepository;
             _motoRepository = motoRepository;
+            _logger = logger;
         }
 
         public async Task<Locacao> CriarLocacaoAsync(LocacaoDto locacaoDto)
         {
+            _logger.LogInformation("Iniciando criação de locação. EntregadorId={EntregadorId}, MotoId={MotoId}, Plano={Plano}",
+                locacaoDto.EntregadorId, locacaoDto.MotoId, locacaoDto.Plano);
+
             var entregador = await _entregadorRepository.ObterPorIdAsync(locacaoDto.EntregadorId);
 
             if (entregador is null || entregador.TipoCnh != "A")
+            {
+                _logger.LogWarning("Falha ao criar locação: entregador inválido ou CNH não é categoria A. EntregadorId={EntregadorId}", locacaoDto.EntregadorId);
                 throw new InvalidOperationException("Somente entregadores com CNH categoria A podem alugar motos.");
+            }
 
             var moto = await _motoRepository.ObterMotoPorIdAsync(locacaoDto.MotoId);
 
             if (moto is null)
+            {
+                _logger.LogWarning("Falha ao criar locação: moto não encontrada. MotoId={MotoId}", locacaoDto.MotoId);
                 throw new InvalidOperationException("Moto não encontrada.");
+            }
 
             var existe = await _locacaoRepository.ExisteAlgumaLocacaoComEsseEntregadorIdEMotoId(locacaoDto.EntregadorId, locacaoDto.MotoId);
 
-            if(existe)
+            if (existe)
+            {
+                _logger.LogWarning("Falha ao criar locação: já existe locação ativa. EntregadorId={EntregadorId}, MotoId={MotoId}",
+                    locacaoDto.EntregadorId, locacaoDto.MotoId);
                 throw new InvalidOperationException("A moto já está alugada para esse entregador");
+            }
 
             Locacao locacao = ObterLocacaoASerInserida(locacaoDto);
             await _locacaoRepository.AdicionarAsync(locacao);
@@ -69,14 +86,22 @@ namespace Application.Services
         public async Task<decimal> CalcularValorFinalAsync(Guid locacaoId, DateTime dataDevolucao)
         {
             var locacao = await _locacaoRepository.ObterPorIdAsync(locacaoId);
+
             if (locacao is null)
+            {
+                _logger.LogError("Locação não encontrada ao calcular valor final. LocacaoId={LocacaoId}", locacaoId);
                 throw new InvalidOperationException("Locação não encontrada.");
+            }
 
             var plano = PlanoLocacao.ObterPorDias((locacao.DataPrevisaoTermino - locacao.DataInicio).Days);
 
             int diasEfetivados = (dataDevolucao.Date - locacao.DataInicio.Date).Days;
             if (diasEfetivados < 1)
+            {
+                _logger.LogWarning("Data de devolução inválida. LocacaoId={LocacaoId}, DataDevolucao={DataDevolucao}",
+                    locacaoId, dataDevolucao);
                 throw new InvalidOperationException("Data de devolução inválida.");
+            }
 
             var valorFinal = CalcularValorFinalDaLocaocao(dataDevolucao, locacao, plano, diasEfetivados);
 
@@ -138,8 +163,11 @@ namespace Application.Services
         public async Task<Locacao> ObterPorIdAsync(Guid id)
         {
             var locacao = await _locacaoRepository.ObterPorIdAsync(id);
-            if (locacao == null)
-                throw new KeyNotFoundException("Locação não encontrada.");
+            if (locacao is null)
+            {
+                _logger.LogError("Locação não encontrada ao calcular valor final. LocacaoId={LocacaoId}", id);
+                throw new InvalidOperationException("Locação não encontrada.");
+            }
 
             return locacao;
         }

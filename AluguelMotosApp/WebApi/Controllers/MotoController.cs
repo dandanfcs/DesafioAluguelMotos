@@ -2,6 +2,7 @@ using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Numerics;
 
 namespace WebApi.Controllers
 {
@@ -11,10 +12,12 @@ namespace WebApi.Controllers
     public class MotoController : ControllerBase
     {
         private readonly IMotoService _motoService;
+        private readonly ILogger<MotoController> _logger;
 
-        public MotoController(IMotoService motoService)
+        public MotoController(IMotoService motoService, ILogger<MotoController> logger)
         {
             _motoService = motoService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -23,7 +26,12 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> ListarMotos()
         {
+            _logger.LogInformation("Requisição recebida para listar todas as motos");
+
             var motos = await _motoService.ListarMotosCadastradasAsync();
+
+            _logger.LogInformation("Quantidade de motos encontradas: "+ motos.Count());
+
             return Ok(motos);
         }
 
@@ -61,6 +69,7 @@ namespace WebApi.Controllers
         [HttpPut("{id}/placa")]
         public async Task<IActionResult> AtualizarPlaca([FromRoute] string id, [FromBody] PlacaDto placaDto)
         {
+            _logger.LogInformation("Requisição recebida para atualizar a placa de Id: {id}", id);
 
             if (string.IsNullOrWhiteSpace(placaDto.Placa))
                 return BadRequest(new { Status = 400, Mensagem = "A placa não pode ser vazia." });
@@ -80,6 +89,8 @@ namespace WebApi.Controllers
         [HttpGet("/placa/{placa}")]
         public async Task<IActionResult> ObterMotoPelaPlaca([FromRoute] string placa)
         {
+            _logger.LogInformation("Requisição recebida para buscas a placa: {placa}", placa);
+
             if (string.IsNullOrWhiteSpace(placa))
                 return BadRequest(new { Status = 400, Mensagem = "A placa não pode ser vazia." });
 
@@ -97,6 +108,8 @@ namespace WebApi.Controllers
         [HttpDelete("/placa/{id}")]
         public async Task RemoverMoto([FromRoute] string id)
         {
+            _logger.LogInformation("Requisição recebida remover a moto de id: {id}", id);
+
             await _motoService.RemoverMotoAsync(id);
         }
     }

@@ -1,8 +1,8 @@
 ﻿using Application.Dtos;
 using Application.Interfaces;
 using Domain.Entities;
-using Domain.Events;
 using Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
@@ -10,6 +10,7 @@ namespace Application.Services
     {
         private IMotoRepository motoRepository;
         private ILocacaoRepository locacaoRepository;
+        private readonly ILogger<LocacaoService> _logger;
 
         public MotoService(IMotoRepository motoRepository, ILocacaoRepository locacaoRepository)
         {
@@ -19,6 +20,8 @@ namespace Application.Services
 
         public async Task CadastrarMotoAsync(MotoDto motoDto)
         {
+            _logger.LogInformation("Iniciando cadastro da moto {Identificador} - Placa {Placa}", motoDto.Identificador, motoDto.Placa);
+
             var moto = new Moto()
             {
                 Identificador = motoDto.Identificador,
@@ -32,11 +35,14 @@ namespace Application.Services
 
         public async Task<Moto> ObterMotoPorPlacaAsync(string placa)
         {
+            _logger.LogInformation("Buscando moto pela Placa {Placa}", placa);
+
             return await motoRepository.ObterMotoPorPlacaAsync(placa);
         }
 
         public async Task<Moto> ObterMotoPorIdAsync(string id)
         {
+            _logger.LogInformation("Buscando moto pela Id {Placa}", id);
             return await motoRepository.ObterMotoPorIdAsync(id);
         }
 
@@ -52,17 +58,31 @@ namespace Application.Services
 
         public async Task<List<Moto>> ListarMotosCadastradasAsync()
         {
-            return await motoRepository.ListarMotosCadastradasAsync();
+            _logger.LogDebug("Listando todas as motos cadastradas");
+
+            var motos = await motoRepository.ListarMotosCadastradasAsync();
+
+            _logger.LogInformation("{Quantidade} motos encontradas", motos.Count);
+
+            return motos;
         }
 
         public async Task RemoverMotoAsync(string id)
         {
+
+            _logger.LogInformation("Tentando remover moto {Id}", id);
+
             var existeLocacao = await locacaoRepository.ExisteLocacaoAtivaParaMotoAsync(id);
 
             if (existeLocacao)
-                throw new Exception("A moto nao pode ser removida, pois existe locacao para a mesma!");
+            {
+                _logger.LogError("Não é possível remover a moto {Id}. Existe uma locação ativa vinculada.", id);
+                throw new InvalidOperationException("A moto não pode ser removida, pois existe locação ativa para a mesma!");
+            }
 
             await motoRepository.RemoverMotoAsync(id);
+
+            _logger.LogInformation("Moto {Id} removida com sucesso", id);
         }
     }
 }
