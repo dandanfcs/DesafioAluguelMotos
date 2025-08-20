@@ -177,7 +177,7 @@ https://localhost:7234
 http://localhost:5065
 ```
 
-4. Swagger UI: `https://localhost:5001/swagger`  
+4. Swagger UI: `https://localhost:7234/swagger`  
 
 
 
