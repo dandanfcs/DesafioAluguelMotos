@@ -2,17 +2,16 @@
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
-using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
     public class EntregadorService : IEntregadorService
     {
         private readonly IEntregadorRepository _repository;
+        private readonly ICnhStorageService _cnhStorageService;
         private enum TiposDeCnhValidos
         {
             [Description("A")]
@@ -23,12 +22,13 @@ namespace Application.Services
             AmaisB = 3
         }
 
-        public EntregadorService(IEntregadorRepository repository)
+        public EntregadorService(IEntregadorRepository repository, ICnhStorageService cnhStorageService)
         {
             _repository = repository;
+            _cnhStorageService = cnhStorageService;
         }
 
-        public async Task AdicionarEntregadorAsync(EntregadorDto entregadorDto)
+        public async Task AdicionarEntregadorAsync(EntregadorDto entregadorDto, IFormFile imagemCnh)
         {
             await ValidarSeJaExisteEntregadorComOMesmoCnpjOuCnh(entregadorDto);
 
@@ -43,10 +43,11 @@ namespace Application.Services
                 DataNascimento = entregadorDto.DataNascimento,
                 NumeroCnh = entregadorDto.NumeroCnh,
                 TipoCnh = entregadorDto.TipoCnh,
-                ImagemCnhPath = entregadorDto.ImagemCnhPath,
             };
 
             await _repository.AdicionarAsync(entregador);
+
+            await _cnhStorageService.SaveCnhAsync(entregador.Id, imagemCnh);
         }
 
         private async Task ValidarSeJaExisteEntregadorComOMesmoCnpjOuCnh(EntregadorDto entregadorDto)

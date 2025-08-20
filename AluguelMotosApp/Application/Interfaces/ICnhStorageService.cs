@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Infrastructure.Services
+namespace Application.Interfaces
+
 {
     public interface ICnhStorageService
     {

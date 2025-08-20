@@ -20,41 +20,59 @@ namespace WebApi.Controllers
             _cnhStorageService = cnhStorageService;
         }
 
+
+        /// <summary>
+        /// Faz o upload da CNH do entregador
+        /// </summary>
         [HttpPost("{entregadorId}/cnh")]
-        public async Task<IActionResult> UploadCnh([FromRoute] Guid entregadorId, IFormFile file)
+        public async Task<IActionResult> UploadCnh([FromRoute] Guid entregadorId, IFormFile imagemCnh)
         {
-            if (file == null)
-                return BadRequest("Nenhum arquivo enviado.");
+            ValidarSeExtensaoDoArquivoEhPermitida(imagemCnh);
 
-            var allowedExtensions = new[] { ".png", ".bmp" };
-            var extension = Path.GetExtension(file.FileName).ToLower();
-
-            if (!allowedExtensions.Contains(extension))
-                return BadRequest("Formato de arquivo inválido. Apenas PNG ou BMP são permitidos.");
-
-            var filePath = await _cnhStorageService.SaveCnhAsync(entregadorId, file);
+            var filePath = await _cnhStorageService.SaveCnhAsync(entregadorId, imagemCnh);
 
             return Ok(new { FilePath = filePath });
         }
 
+        /// <summary>
+        /// Cadastra um novo entregador e sua CNH
+        /// </summary>
         [HttpPost]
-        public async Task<IActionResult> CadastrarEntregador([FromBody] EntregadorDto entregadorDto)
+        public async Task<IActionResult> CadastrarEntregador([FromForm] EntregadorDto entregadorDto)
         {
             if (_entregadorService.ValidarEntregador(entregadorDto))
             {
                 return BadRequest(new { Status = 400, Mensagem = "Nome, Email e CPF são obrigatórios." });
             }
 
-            await _entregadorService.AdicionarEntregadorAsync(entregadorDto);
+            ValidarSeExtensaoDoArquivoEhPermitida(entregadorDto.ImagemCnh);
+
+            await _entregadorService.AdicionarEntregadorAsync(entregadorDto, entregadorDto.ImagemCnh);
 
             return Ok("Entregador cadastrado com sucesso!");
         }
 
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> ObterEntregadorPorId(Guid id)
+
+        /// <summary>
+        /// Retorna todos os entregadores
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> ObterEntregadores()
         {
-            var entregador = await _entregadorService.ObterPorIdAsync(id);
+            var entregador = await _entregadorService.ObterTodosAsync();
             return Ok(entregador);
+        }
+
+        private void ValidarSeExtensaoDoArquivoEhPermitida(IFormFile imagemCnh)
+        {
+            if (imagemCnh == null)
+                throw new Exception("Nenhum arquivo enviado.");
+
+            var extensoesPermitidas = new[] { ".png", ".bmp" };
+            var extension = Path.GetExtension(imagemCnh.FileName).ToLower();
+
+            if (!extensoesPermitidas.Contains(extension))
+                throw new Exception("Formato de arquivo inválido. Apenas PNG ou BMP são permitidos.");
         }
 
     }

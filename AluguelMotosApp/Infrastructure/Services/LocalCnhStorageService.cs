@@ -1,4 +1,4 @@
-﻿using Infrastructure.Services;
+﻿using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Interfaces
@@ -14,15 +14,26 @@ namespace Infrastructure.Interfaces
                 Directory.CreateDirectory(_storagePath);
         }
 
-        public async Task<string> SaveCnhAsync(Guid entregadorId, IFormFile file)
+        public async Task<string> SaveCnhAsync(Guid entregadorId, IFormFile arquivo)
         {
-            var fileName = $"{entregadorId}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-            var filePath = Path.Combine(_storagePath, fileName);
+            if (arquivo == null || arquivo.Length == 0)
+                throw new ArgumentException("Arquivo inválido.");
 
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
+            // Cria o nome do arquivo baseado apenas no entregadorId
+            var NomeDoArquivo = $"{entregadorId}{Path.GetExtension(arquivo.FileName)}";
+            var NomeDaPasta = Path.Combine(_storagePath, NomeDoArquivo);
 
-            return filePath;
+            // Se já existir um arquivo com o mesmo nome, remove
+            if (File.Exists(NomeDaPasta))
+            {
+                File.Delete(NomeDaPasta);
+            }
+
+            // Salva o novo arquivo
+            await using var stream = new FileStream(NomeDaPasta, FileMode.Create);
+            await arquivo.CopyToAsync(stream);
+
+            return NomeDaPasta;
         }
     }
 }
