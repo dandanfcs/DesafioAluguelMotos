@@ -40,8 +40,7 @@ _ReSharper*/
 # ================================
 # Configura��es locais e sens�veis
 # ================================
-appsettings.*.json
-launchSettings.json
+
 .env
 *.local
 *.db
