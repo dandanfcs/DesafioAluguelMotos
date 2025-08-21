@@ -14,8 +14,7 @@ Antes de rodar a API, você precisa ter instalados:
 
 ## 🐳 Serviços externos via Docker
 
-### PostgreSQL
-
+### PostgreSQL Comando ajustado Windows PowerShell
 ```bash
 docker run -d \
   --name postgres-db \
@@ -26,14 +25,22 @@ docker run -d \
   postgres:15
 ```
 
-### RabbitMQ
+### PostgreSQL Comando para Windows PowerShell
+```bash
+docker run -d --name postgres-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=123456 -e POSTGRES_DB=MotosAppDb -p 5432:5432 postgres:15
+```
 
+### RabbitMQ Comando para Linux/macOS:
 ```bash
 docker run -d \
   --name rabbitmq \
   -p 5672:5672 \
   -p 15672:15672 \
   rabbitmq:3-management
+```
+### RabbitMQ Comando para Windows PowerShell
+```bash
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
 - **RabbitMQ UI:** http://localhost:15672  
