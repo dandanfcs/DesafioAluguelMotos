@@ -193,12 +193,17 @@ dotnet tool install --global dotnet-ef
 ```
 
 ### 1️⃣ Migrations para `AppDbContext` (dados da aplicação)
+No Visual studio 2022 a opção como na imagem abaixo: 
+### Ferramentas -> Gerenciador de pacotes Nugget -> Console do Gerenciador de pacotes Nugget
 
+<img width="761" height="447" alt="image" src="https://github.com/user-attachments/assets/7fe72e74-878b-4259-8e6a-201db4fbb7f7" />
+
+Após isso, execute os comandos abaixo:
 ```bash
-dotnet ef migrations add InitAppDb -p Infrastructure -s WebApi --context AppDbContext
+dotnet ef migrations add InitAppDb -p Infrastructure/Infrastructure.csproj -s WebApi/WebApi.csproj --context AppDbContext
 dotnet ef database update -p Infrastructure -s WebApi --context AppDbContext
 ```
-
+Após isso, execute os outros comandos abaixo:
 ### 2️⃣ Migrations para `ApplicationUserDbContext` (Identity)
 
 ```bash
