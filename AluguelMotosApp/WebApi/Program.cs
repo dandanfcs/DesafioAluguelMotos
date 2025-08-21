@@ -1,4 +1,5 @@
 ﻿using Infrastructure.DI;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -51,8 +52,8 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
 builder.Services.AddInfrastructure(builder.Configuration);
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -77,12 +78,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseMiddleware<ExceptionMiddleware>();
-
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
+
+public partial class Program { }

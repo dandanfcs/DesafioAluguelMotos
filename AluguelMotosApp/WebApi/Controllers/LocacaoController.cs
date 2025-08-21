@@ -89,7 +89,7 @@ namespace WebApi.Controllers
                 _logger.LogInformation("Cálculo do valor final concluído. LocacaoId={LocacaoId}, ValorFinal={ValorFinal}",
                     locacaoId, valorLocacao);
 
-                return Ok(new { ValorFinal = valorLocacao });
+                return Ok(valorLocacao);
             }
             catch (InvalidOperationException ex)
             {

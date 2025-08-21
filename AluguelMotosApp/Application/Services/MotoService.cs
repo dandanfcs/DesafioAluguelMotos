@@ -10,12 +10,13 @@ namespace Application.Services
     {
         private IMotoRepository motoRepository;
         private ILocacaoRepository locacaoRepository;
-        private readonly ILogger<LocacaoService> _logger;
+        private readonly ILogger<MotoService> _logger;
 
-        public MotoService(IMotoRepository motoRepository, ILocacaoRepository locacaoRepository)
+        public MotoService(IMotoRepository motoRepository, ILocacaoRepository locacaoRepository, ILogger<MotoService> logger)
         {
             this.motoRepository = motoRepository;
             this.locacaoRepository = locacaoRepository;
+            this._logger = logger;
         }
 
         public async Task CadastrarMotoAsync(MotoDto motoDto)

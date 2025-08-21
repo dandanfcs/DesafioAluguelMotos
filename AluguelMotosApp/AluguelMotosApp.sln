@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{DD7FABE9-E358-4A48-A8BD-1C1B0A04A25B}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{A122BAB2-D12B-442A-86D6-32D59CDE9A39}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{9791CC56-8108-43FD-81A5-E02F5ABAA422}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitTestsIntegration", "XUnitTestsIntegration\XUnitTestsIntegration.csproj", "{C600E77C-4B2A-4B5E-9B5C-7561EE7E530F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{9791CC56-8108-43FD-81A5-E02F5ABAA422}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9791CC56-8108-43FD-81A5-E02F5ABAA422}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9791CC56-8108-43FD-81A5-E02F5ABAA422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C600E77C-4B2A-4B5E-9B5C-7561EE7E530F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C600E77C-4B2A-4B5E-9B5C-7561EE7E530F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C600E77C-4B2A-4B5E-9B5C-7561EE7E530F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C600E77C-4B2A-4B5E-9B5C-7561EE7E530F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,7 +7,7 @@ namespace Application.Interfaces
     public interface IEntregadorService
     {
         Task AdicionarEntregadorAsync(EntregadorDto entregadorDto, IFormFile imagemCnh);
-        Task<IEnumerable<Entregador>> ObterTodosAsync();
+        Task<List<Entregador>> ObterTodosAsync();
         bool ValidarEntregador(EntregadorDto entregadorDto);
     }
 }

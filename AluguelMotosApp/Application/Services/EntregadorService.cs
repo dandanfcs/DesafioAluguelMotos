@@ -97,12 +97,12 @@ namespace Application.Services
             return entregador;
         }
 
-        public async Task<IEnumerable<Entregador>> ObterTodosAsync()
+        public async Task<List<Entregador>> ObterTodosAsync()
         {
             _logger.LogInformation("Buscando todos os entregadores.");
             var entregadores = await _repository.ObterTodosAsync();
             _logger.LogInformation("Total de entregadores encontrados: {Quantidade}", entregadores.Count());
-            return entregadores;
+            return entregadores.ToList();
         }
 
         public async Task RemoverEntregadorAsync(Guid id)
