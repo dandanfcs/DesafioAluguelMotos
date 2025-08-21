@@ -1,5 +1,5 @@
 # ================================
-# Build e binários
+# Build e binï¿½rios
 # ================================
 bin/
 obj/
@@ -38,7 +38,7 @@ _ReSharper*/
 .idea/
 
 # ================================
-# Configurações locais e sensíveis
+# Configuraï¿½ï¿½es locais e sensï¿½veis
 # ================================
 appsettings.*.json
 launchSettings.json
@@ -61,7 +61,7 @@ TestResults/
 *.dotCover*
 
 # ================================
-# Publicação / Deploy
+# Publicaï¿½ï¿½o / Deploy
 # ================================
 publish/
 wwwroot/
@@ -76,10 +76,9 @@ docker-compose.override.yml
 *.docker
 
 # ================================
-# Outros temporários
+# Outros temporï¿½rios
 # ================================
 *.tmp
 *.bak
 *.swp
 *.lock
-/AluguelMotosApp/Domain/Domain.csproj
