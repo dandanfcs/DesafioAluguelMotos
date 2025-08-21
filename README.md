@@ -216,6 +216,12 @@ dotnet ef database update -p Infrastructure -s WebApi --context ApplicationUserD
 
 ---
 
+### Definindo Projeto de inicialização
+Certifique-se que o projeto de inicialização é o WebApi, caso não seja clique com botão direito em cima do projeto e clique em "Definir projeto de inicialização" como na imagem abaixo:
+
+<img width="540" height="1088" alt="image" src="https://github.com/user-attachments/assets/e375d918-d41f-4398-b1d7-1e62949ca5d3" />
+
+
 ## 🚀 Rodando a API
 
 1. Abra o terminal na raiz do projeto  
